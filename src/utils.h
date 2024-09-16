@@ -1,10 +1,12 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> split(std::string s, std::string delim);
+using namespace std;
 
-std::string bufferToString(char *buffer, int buff_len);
+vector<string> split(string s, string delim);
 
-void ltrim(std::string &s);
+string bufferToString(char *buffer, int buff_len);
 
-void rtrim(std::string &s);
+void ltrim(string &s);
+
+void rtrim(string &s);

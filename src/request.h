@@ -3,26 +3,28 @@
 #include <string>
 #include <unordered_map>
 
+using namespace std;
+
 class Request
 {
 
 public:
-  std::string url;
-  std::string host;
-  std::string method;
-  std::string protocol;
+  string url;
+  string host;
+  string method;
+  string protocol;
 
-  std::string body;
+  string body;
 
-  std::unordered_map<std::string, std::string> params;
-  std::unordered_map<std::string, std::string> headers;
+  unordered_map<string, string> params;
+  unordered_map<string, string> headers;
 
-  Request(std::string http_str);
+  Request(string http_str);
 
-  friend std::ostream &operator<<(std::ostream &out, const Request &req);
+  friend ostream &operator<<(ostream &out, const Request &req);
 
 private:
-  void parse_first_line(std::string first_line);
-  void parse_headers_and_body(std::vector<std::string> headers_line);
+  void parse_first_line(string first_line);
+  void parse_headers_and_body(vector<string> headers_line);
 };
 #endif
