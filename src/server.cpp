@@ -63,15 +63,25 @@ int main(int argc, char **argv) {
   std::cout << "Waiting for a client to connect...\n";
   
   int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
+
   std::cout << "Client connected\n";
 
-  // std::vector<int> buffer;
+  char* buffer = new char[1024];
 
-  // read(client_fd, (struct sockaddr *) &client_addr, client_addr_len);
+  int bytes_read = read(client_fd, buffer, 1024);
+
+  if (bytes_read <= 0) {
+    close(client_fd);
+    close(server_fd);
+
+    exit(bytes_read);
+  }
 
   const std::string message = "HTTP/1.1 200 OK\r\n\r\n";
 
-  Request request = Request("GET / HTTP/1.1\r\n\r\n");
+  Request request = Request(buffer);
+
+  std::cout << request;
 
   write(client_fd, message.c_str(), message.size());
 
