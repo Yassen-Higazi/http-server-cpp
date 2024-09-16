@@ -7,6 +7,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <vector>
+
+#include "request.h"
 
 int setup_server() {
   int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -62,9 +65,15 @@ int main(int argc, char **argv) {
   int client_fd = accept(server_fd, (struct sockaddr *) &client_addr, (socklen_t *) &client_addr_len);
   std::cout << "Client connected\n";
 
-  char* message = "HTTP/1.1 200 OK\r\n\r\n";
+  // std::vector<int> buffer;
 
-  write(client_fd, message, strlen(message));
+  // read(client_fd, (struct sockaddr *) &client_addr, client_addr_len);
+
+  const std::string message = "HTTP/1.1 200 OK\r\n\r\n";
+
+  Request request = Request("GET / HTTP/1.1\r\n\r\n");
+
+  write(client_fd, message.c_str(), message.size());
 
   close(client_fd);
   close(server_fd);
