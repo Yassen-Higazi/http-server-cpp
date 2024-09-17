@@ -58,9 +58,9 @@ ostream &operator<<(ostream &out, Request const &req)
   }
   out << " } ";
 
-  out << "Body: " << req.body << '\n';
+  out << "Body: " << req.body;
 
-  out << "}";
+  out << " }";
 
   return out;
 }

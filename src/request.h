@@ -1,4 +1,4 @@
-#ifndef Request
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -27,4 +27,3 @@ private:
   void parse_first_line(string first_line);
   void parse_headers_and_body(vector<string> headers_line);
 };
-#endif

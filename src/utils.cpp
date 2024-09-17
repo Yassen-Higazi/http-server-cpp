@@ -1,5 +1,9 @@
 #include <string>
 #include <vector>
+#include <cctype>
+#include <locale>
+#include <algorithm>
+#include <functional>
 
 using namespace std;
 

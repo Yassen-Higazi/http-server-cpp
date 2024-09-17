@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "request.h"
+#include "response.h"
 
 using namespace std;
 
@@ -85,13 +86,18 @@ int main(int argc, char **argv)
     exit(bytes_read);
   }
 
-  const string message = "HTTP/1.1 200 OK\r\n\r\n";
-
   Request request = Request(buffer);
 
-  cout << request;
+  Response response = Response(&request);
 
-  write(client_fd, message.c_str(), message.size());
+  if (request.url.compare("/") != 0)
+  {
+    response.set_status(404, "Not Found");
+  }
+
+  string response_body = response.to_http_format();
+
+  write(client_fd, response_body.c_str(), response_body.size());
 
   close(client_fd);
   close(server_fd);
