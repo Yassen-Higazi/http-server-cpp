@@ -29,7 +29,7 @@ void Response::set_body(string data, string content_type)
   body = data;
 
   headers["Content-Type"] = content_type;
-  headers["Content-Length"] = body.length();
+  headers["Content-Length"] = to_string(data.size());
 }
 
 string Response::to_http_format()

@@ -9,6 +9,7 @@
 #include <netdb.h>
 #include <vector>
 
+#include "utils.h"
 #include "request.h"
 #include "response.h"
 
@@ -90,7 +91,30 @@ int main(int argc, char **argv)
 
   Response response = Response(&request);
 
-  if (request.url.compare("/") != 0)
+  if (request.url.compare("/") == 0)
+  {
+    response.set_status(200, "OK");
+  }
+  else if (request.url.contains("/echo"))
+  {
+    vector<string> splits = split(request.url, "/");
+
+    string data = "";
+
+    for (string split : splits)
+    {
+      if (split.compare("echo") == 0)
+      {
+        continue;
+      }
+
+      data += split;
+    }
+
+    response.set_status(200, "OK");
+    response.set_body(data, "text/plain");
+  }
+  else
   {
     response.set_status(404, "Not Found");
   }
