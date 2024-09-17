@@ -58,35 +58,8 @@ int setup_server()
   return server_fd;
 }
 
-int main(int argc, char **argv)
+string handle_connection(char *buffer)
 {
-  // Flush after every cout / cerr
-  cout << unitbuf;
-  cerr << unitbuf;
-
-  int server_fd = setup_server();
-
-  struct sockaddr_in client_addr;
-  int client_addr_len = sizeof(client_addr);
-
-  cout << "Waiting for a client to connect...\n";
-
-  int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-
-  cout << "Client connected\n";
-
-  char *buffer = new char[1024];
-
-  int bytes_read = read(client_fd, buffer, 1024);
-
-  if (bytes_read <= 0)
-  {
-    close(client_fd);
-    close(server_fd);
-
-    exit(bytes_read);
-  }
-
   Request request = Request(buffer);
 
   Response response = Response(&request);
@@ -124,7 +97,39 @@ int main(int argc, char **argv)
     response.set_status(404, "Not Found");
   }
 
-  string response_body = response.to_http_format();
+  return response.to_http_format();
+}
+
+int main(int argc, char **argv)
+{
+  // Flush after every cout / cerr
+  cout << unitbuf;
+  cerr << unitbuf;
+
+  int server_fd = setup_server();
+
+  struct sockaddr_in client_addr;
+  int client_addr_len = sizeof(client_addr);
+
+  cout << "Waiting for a client to connect...\n";
+
+  int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+
+  cout << "Client connected\n";
+
+  char *buffer = new char[1024];
+
+  int bytes_read = read(client_fd, buffer, 1024);
+
+  if (bytes_read <= 0)
+  {
+    close(client_fd);
+    close(server_fd);
+
+    exit(bytes_read);
+  }
+
+  string response_body = handle_connection(buffer);
 
   write(client_fd, response_body.c_str(), response_body.size());
 
