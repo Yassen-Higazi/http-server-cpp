@@ -1,17 +1,18 @@
 #include <iostream>
 #include <cstdlib>
 #include <string>
+#include <vector>
 #include <cstring>
+#include <csignal>
 #include <unistd.h>
 #include <sys/types.h>
-#include <sys/socket.h>
 #include <arpa/inet.h>
-#include <netdb.h>
-#include <vector>
+#include <sys/socket.h>
 
 #include "utils.h"
 #include "request.h"
 #include "response.h"
+#include "request_handler.h"
 
 using namespace std;
 
@@ -58,46 +59,21 @@ int setup_server()
   return server_fd;
 }
 
-string handle_connection(char *buffer)
+static volatile bool keep_running = true;
+
+int server_fd;
+
+void signalHandler(int signum)
 {
-  Request request = Request(buffer);
+  cout << "Interrupt signal (" << signum << ") received.\n";
 
-  Response response = Response(&request);
+  keep_running = false;
 
-  if (request.url.compare("/") == 0)
-  {
-    response.set_status(200, "OK");
-  }
-  else if (request.url.contains("/echo"))
-  {
-    vector<string> splits = split(request.url, "/");
+  // cleanup and close up stuff here
+  close(server_fd);
+  // terminate program
 
-    string data = "";
-
-    for (string split : splits)
-    {
-      if (split.compare("echo") == 0)
-      {
-        continue;
-      }
-
-      data += split;
-    }
-
-    response.set_status(200, "OK");
-    response.set_body(data, "text/plain");
-  }
-  else if (request.url.contains("/user-agent"))
-  {
-    response.set_status(200, "OK");
-    response.set_body(request.headers["User-Agent"], "text/plain");
-  }
-  else
-  {
-    response.set_status(404, "Not Found");
-  }
-
-  return response.to_http_format();
+  //  exit(signum);
 }
 
 int main(int argc, char **argv)
@@ -106,34 +82,28 @@ int main(int argc, char **argv)
   cout << unitbuf;
   cerr << unitbuf;
 
-  int server_fd = setup_server();
+  server_fd = setup_server();
 
   struct sockaddr_in client_addr;
   int client_addr_len = sizeof(client_addr);
 
   cout << "Waiting for a client to connect...\n";
 
-  int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
+  signal(SIGINT, signalHandler);
 
-  cout << "Client connected\n";
+  // Create a thread pool
+  ThreadPool *pool = new ThreadPool(100);
 
-  char *buffer = new char[1024];
-
-  int bytes_read = read(client_fd, buffer, 1024);
-
-  if (bytes_read <= 0)
+  // Create work for it
+  while (keep_running)
   {
-    close(client_fd);
-    close(server_fd);
+    int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
 
-    exit(bytes_read);
+    pool->addTask(new HandleRequestTask(client_fd));
   }
 
-  string response_body = handle_connection(buffer);
+  delete pool;
 
-  write(client_fd, response_body.c_str(), response_body.size());
-
-  close(client_fd);
   close(server_fd);
 
   return 0;
