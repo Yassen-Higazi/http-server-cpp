@@ -9,13 +9,15 @@
 
 using namespace std;
 
-HandleRequestTask::HandleRequestTask(int client_socket_fd) : Task()
+HandleRequestTask::HandleRequestTask(int client_socket_fd, Router *r) : Task()
 {
   cout << "Client connected\n";
 
   buffer = new char[1024];
 
   client_fd = client_socket_fd;
+
+  router = r;
 };
 
 HandleRequestTask::~HandleRequestTask()
@@ -64,35 +66,13 @@ string HandleRequestTask::handle_connection(char *buffer)
 
   Response response = Response(&request);
 
-  if (request.url.compare("/") == 0)
+  try
   {
-    response.set_status(200, "OK");
+    Handler_return result = router->get_handler(request.method, request.url);
+
+    (*result.handler)(&request, &response);
   }
-  else if (request.url.contains("/echo"))
-  {
-    vector<string> splits = split(request.url, "/");
-
-    string data = "";
-
-    for (string split : splits)
-    {
-      if (split.compare("echo") == 0)
-      {
-        continue;
-      }
-
-      data += split;
-    }
-
-    response.set_status(200, "OK");
-    response.set_body(data, "text/plain");
-  }
-  else if (request.url.contains("/user-agent"))
-  {
-    response.set_status(200, "OK");
-    response.set_body(request.headers["User-Agent"], "text/plain");
-  }
-  else
+  catch (const invalid_argument &e)
   {
     response.set_status(404, "Not Found");
   }

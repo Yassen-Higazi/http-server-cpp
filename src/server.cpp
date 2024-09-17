@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <shared_mutex>
 
 #include "server.h"
 
@@ -62,7 +63,8 @@ HttpServer::~HttpServer()
   close(server_fd);
 }
 
-void HttpServer::start() {
+void HttpServer::start()
+{
   cout << "Waiting for a client to connect...\n";
 
   struct sockaddr_in client_addr;
@@ -73,6 +75,6 @@ void HttpServer::start() {
   {
     int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
 
-    pool->addTask(new HandleRequestTask(client_fd));
+    pool->addTask(new HandleRequestTask(client_fd, &router));
   }
 }
