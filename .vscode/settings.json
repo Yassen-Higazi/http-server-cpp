@@ -50,6 +50,7 @@
     "__tree": "cpp",
     "map": "cpp",
     "optional": "cpp",
-    "functional": "cpp"
+    "functional": "cpp",
+    "queue": "cpp"
   }
 }
