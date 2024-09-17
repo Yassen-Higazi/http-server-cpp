@@ -114,6 +114,11 @@ int main(int argc, char **argv)
     response.set_status(200, "OK");
     response.set_body(data, "text/plain");
   }
+  else if (request.url.contains("/user-agent"))
+  {
+    response.set_status(200, "OK");
+    response.set_body(request.headers["User-Agent"], "text/plain");
+  }
   else
   {
     response.set_status(404, "Not Found");
