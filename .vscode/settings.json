@@ -51,6 +51,8 @@
     "map": "cpp",
     "optional": "cpp",
     "functional": "cpp",
-    "queue": "cpp"
+    "queue": "cpp",
+    "deque": "cpp",
+    "filesystem": "cpp"
   }
 }
