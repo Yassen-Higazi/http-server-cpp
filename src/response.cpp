@@ -1,8 +1,8 @@
 #include <string>
 #include <iostream>
 
-#include "utils.h"
-#include "response.h"
+#include "headers/utils.h"
+#include "headers/response.h"
 
 using namespace std;
 

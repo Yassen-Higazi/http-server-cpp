@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "thread_pool.h"
+#include "headers/thread_pool.h"
 
 // Reusable thread class
 Thread::Thread()

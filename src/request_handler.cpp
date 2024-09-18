@@ -2,10 +2,10 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "utils.h"
-#include "request.h"
-#include "response.h"
-#include "request_handler.h"
+#include "headers/utils.h"
+#include "headers/request.h"
+#include "headers/response.h"
+#include "headers/request_handler.h"
 
 using namespace std;
 
