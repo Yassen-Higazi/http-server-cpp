@@ -96,6 +96,7 @@ Handler_return Router::get_handler(string method, string url)
 
   for (string segment : split(url, "/"))
   {
+    cout << segment << endl;
     if (segment.empty())
     {
       continue;
@@ -108,7 +109,7 @@ Handler_return Router::get_handler(string method, string url)
         throw invalid_argument("No Handler found for " + method + ": " + url);
       }
 
-      current_node = current_node->children["*"];
+      segment = "*";
     }
 
     current_node = current_node->children[segment];
@@ -116,15 +117,9 @@ Handler_return Router::get_handler(string method, string url)
 
   Handler_return result;
 
-  cout << endl
-       << "Test1" << endl;
   result.params = &current_node->params;
 
-  cout << endl
-       << "Test2" << endl;
   result.handler = &current_node->handler.at(method);
-  cout << endl
-       << "Test3" << endl;
 
   return result;
 }

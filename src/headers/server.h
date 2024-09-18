@@ -1,20 +1,29 @@
 #pragma once
+#include <iostream>
+#include <filesystem>
 
+#include "utils.h"
 #include "router.h"
+#include "options.h"
 #include "request_handler.h"
 
-class HttpServer {
+namespace fs = std::filesystem;
 
-  public:
-    HttpServer();
+class HttpServer
+{
 
-    ~HttpServer();
+public:
+  HttpServer();
 
-    void start();
+  ~HttpServer();
 
-    Router router;
-  
-  private:
-    int server_fd;
-    ThreadPool *pool;
+  void start();
+
+  Router router;
+
+  Options options;
+
+private:
+  int server_fd;
+  ThreadPool *pool;
 };

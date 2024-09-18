@@ -2,16 +2,19 @@
 #include <iostream>
 
 #include "headers/utils.h"
+#include "headers/options.h"
 #include "headers/request.h"
 
 using namespace std;
 
-Request::Request(string http_str)
+Request::Request(string http_str, Options *opts)
 {
   vector<string> http_vec = split(http_str, "\r\n");
 
   parse_first_line(http_vec[0]);
   parse_headers_and_body(vector<string>(http_vec.begin() + 1, http_vec.end()));
+
+  options = opts;
 };
 
 void Request::parse_first_line(string line)

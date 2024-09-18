@@ -5,7 +5,50 @@
 #include <algorithm>
 #include <functional>
 
+#include "headers/utils.h"
+
 using namespace std;
+
+string readFile(const char *filename)
+{
+    // Create a text string, which is used to output the text file
+    string line;
+    string content;
+
+    // Read from the text file
+    ifstream file(filename);
+
+    // Use a while loop together with the getline() function to read the file line by line
+    while (getline(file, line))
+    {
+        // Output the text from the file
+        content += line;
+    }
+
+    if (line.empty())
+    {
+        throw invalid_argument("File does not exist");
+    }
+
+    // Close the file
+    file.close();
+
+    return content;
+}
+
+bool writeFile(const char *filename, const char *content)
+{
+    // Create and open a text file
+    ofstream file(filename);
+
+    // Write to the file
+    file << content;
+
+    // Close the file
+    file.close();
+
+    return true;
+}
 
 vector<string> split(string s, string delim)
 {

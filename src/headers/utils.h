@@ -2,8 +2,14 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
+#include <iostream>
 
 using namespace std;
+
+string readFile(const char *filename);
+
+bool writeFile(const char *filename, const char *content);
 
 vector<string> split(string s, string delim);
 

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-HandleRequestTask::HandleRequestTask(int client_socket_fd, Router *r) : Task()
+HandleRequestTask::HandleRequestTask(int client_socket_fd, Router *r, Options *opts) : Task()
 {
   cout << "Client connected\n";
 
@@ -18,6 +18,8 @@ HandleRequestTask::HandleRequestTask(int client_socket_fd, Router *r) : Task()
   client_fd = client_socket_fd;
 
   router = r;
+
+  options = opts;
 };
 
 HandleRequestTask::~HandleRequestTask()
@@ -62,13 +64,33 @@ void HandleRequestTask::showTask()
 
 string HandleRequestTask::handle_connection(char *buffer)
 {
-  Request request = Request(buffer);
+  Request request = Request(buffer, options);
 
   Response response = Response(&request);
 
   try
   {
     Handler_return result = router->get_handler(request.method, request.url);
+
+    for (auto kv : *result.params)
+    {
+      string value = "";
+      string key = kv.first;
+      int position = kv.second;
+
+      for (int i = position; i < request.url.size(); i++)
+      {
+
+        if (request.url[i] == '/')
+        {
+          break;
+        }
+
+        value += request.url[i];
+      }
+
+      request.params[key] = value;
+    }
 
     (*result.handler)(&request, &response);
   }

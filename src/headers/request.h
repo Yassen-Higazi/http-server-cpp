@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "options.h"
+
 using namespace std;
 
 class Request
@@ -16,10 +18,12 @@ public:
 
   string body;
 
+  Options *options;
+
   unordered_map<string, string> params;
   unordered_map<string, string> headers;
 
-  Request(string http_str);
+  Request(string http_str, Options *options);
 
   friend ostream &operator<<(ostream &out, const Request &req);
 
