@@ -1,21 +1,11 @@
-#include <iostream>
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <cstring>
-#include <csignal>
-#include <unistd.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <shared_mutex>
-
 #include "headers/server.h"
 
 using namespace std;
 
-HttpServer::HttpServer()
+HttpServer::HttpServer(string file_dir)
 {
+  options.file_directory = file_dir;
+
   struct sockaddr_in server_addr;
 
   server_addr.sin_family = AF_INET;
