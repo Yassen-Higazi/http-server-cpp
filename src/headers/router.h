@@ -11,9 +11,9 @@
 
 using namespace std;
 
-typedef shared_mutex Lock;
-typedef unique_lock<Lock> WriteLock; // C++ 11
-typedef shared_lock<Lock> ReadLock;  // C++ 14
+typedef std::shared_mutex Lock;
+typedef std::unique_lock<Lock> WriteLock; // C++ 11
+typedef std::shared_lock<Lock> ReadLock;  // C++ 14
 
 using Handler = void (*)(Request *req, Response *res);
 
