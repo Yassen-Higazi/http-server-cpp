@@ -49,7 +49,7 @@ void write_file(Request *req, Response *res)
 
   writeFile(full_path.c_str(), req->body.c_str());
 
-  res->set_status(200, "OK");
+  res->set_status(201, "Created");
 }
 
 int main(int argc, char **argv)
