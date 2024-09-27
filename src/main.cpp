@@ -58,6 +58,8 @@ int main(int argc, char **argv)
   cout << unitbuf;
   cerr << unitbuf;
 
+  cout << argv << endl;
+
   HttpServer server = HttpServer();
 
   server.router.get("/", index);
