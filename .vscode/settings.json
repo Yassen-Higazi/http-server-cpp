@@ -53,6 +53,11 @@
     "functional": "cpp",
     "queue": "cpp",
     "deque": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "csignal": "cpp",
+    "fstream": "cpp",
+    "iomanip": "cpp",
+    "regex": "cpp",
+    "shared_mutex": "cpp"
   }
 }
