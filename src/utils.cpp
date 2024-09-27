@@ -111,20 +111,20 @@ void rtrim(string &s)
             s.end());
 }
 
-string compress(const std::string &str, int compression_level)
+string compress(const string &str, int compression_level)
 {
     z_stream zs; // z_stream is zlib's control structure
     memset(&zs, 0, sizeof(zs));
 
-    if (deflateInit(&zs, compression_level) != Z_OK)
-        throw(std::runtime_error("deflateInit failed while compressing."));
+    if (deflateInit2(&zs, compression_level, Z_DEFLATED, 15 + 16, 8, Z_DEFAULT_STRATEGY) != Z_OK)
+        throw(std::runtime_error("deflateInit2 failed while compressing."));
 
     zs.next_in = (Bytef *)str.data();
     zs.avail_in = str.size(); // set the z_stream's input
 
     int ret;
     char out_buffer[10240];
-    std::string out_string;
+    string out_string;
 
     // retrieve the compressed bytes block wise
     do
@@ -139,17 +139,14 @@ string compress(const std::string &str, int compression_level)
             // append the block to the output string
             out_string.append(out_buffer, zs.total_out - out_string.size());
         }
+
     } while (ret == Z_OK);
 
     deflateEnd(&zs);
 
     if (ret != Z_STREAM_END)
-    { // an error occurred that was not EOF
-        ostringstream oss;
-
-        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
-
-        throw(runtime_error(oss.str()));
+    {
+        throw(runtime_error("Exception during zlib compression: (" + to_string(ret) + ") " + zs.msg));
     }
 
     return out_string;
