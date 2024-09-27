@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <zlib.h>
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -18,3 +19,5 @@ string bufferToString(char *buffer, int buff_len);
 void ltrim(string &s);
 
 void rtrim(string &s);
+
+string compress(const std::string &str, int compression_level = Z_BEST_COMPRESSION);

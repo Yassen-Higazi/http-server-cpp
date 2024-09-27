@@ -2,6 +2,8 @@
 #include <vector>
 #include <cctype>
 #include <locale>
+#include <sstream>
+#include <iostream>
 #include <algorithm>
 #include <functional>
 
@@ -107,4 +109,48 @@ void rtrim(string &s)
                     { return !isspace(ch); })
                 .base(),
             s.end());
+}
+
+string compress(const std::string &str, int compression_level)
+{
+    z_stream zs; // z_stream is zlib's control structure
+    memset(&zs, 0, sizeof(zs));
+
+    if (deflateInit(&zs, compression_level) != Z_OK)
+        throw(std::runtime_error("deflateInit failed while compressing."));
+
+    zs.next_in = (Bytef *)str.data();
+    zs.avail_in = str.size(); // set the z_stream's input
+
+    int ret;
+    char out_buffer[10240];
+    std::string out_string;
+
+    // retrieve the compressed bytes block wise
+    do
+    {
+        zs.next_out = reinterpret_cast<Bytef *>(out_buffer);
+        zs.avail_out = sizeof(out_buffer);
+
+        ret = deflate(&zs, Z_FINISH);
+
+        if (out_string.size() < zs.total_out)
+        {
+            // append the block to the output string
+            out_string.append(out_buffer, zs.total_out - out_string.size());
+        }
+    } while (ret == Z_OK);
+
+    deflateEnd(&zs);
+
+    if (ret != Z_STREAM_END)
+    { // an error occurred that was not EOF
+        ostringstream oss;
+
+        oss << "Exception during zlib compression: (" << ret << ") " << zs.msg;
+
+        throw(runtime_error(oss.str()));
+    }
+
+    return out_string;
 }

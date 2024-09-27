@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#include <algorithm>
+
 #include <unistd.h>
 
 #include "headers/utils.h"
@@ -97,6 +99,18 @@ string HandleRequestTask::handle_connection(char *buffer)
   catch (const invalid_argument &e)
   {
     response.set_status(404, "Not Found");
+  }
+
+  // Handle compression
+  vector<string> accepted_encodings = split(request.headers["Accept-Encoding"], ",");
+
+  if (std::find(accepted_encodings.begin(), accepted_encodings.end(), "gzip") != accepted_encodings.end())
+  {
+    string new_body = compress(response.body);
+
+    response.set_body(new_body, "text/plain");
+
+    response.headers["Content-Encoding"] = "gzip";
   }
 
   return response.to_http_format();

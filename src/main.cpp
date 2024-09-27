@@ -58,19 +58,13 @@ int main(int argc, char **argv)
   cout << unitbuf;
   cerr << unitbuf;
 
-  cout << "You have entered " << argc
-       << " arguments:" << endl;
-
   string dir_path = "";
 
-  // Using a while loop to iterate through arguments
   int i = 0;
 
   while (i < argc)
   {
     char *arg = argv[i];
-    cout << "Argument " << i + 1 << ": " << arg
-         << endl;
 
     if (strcmp(arg, "--directory") == 0 || strcmp(arg, "-d") == 0)
     {
