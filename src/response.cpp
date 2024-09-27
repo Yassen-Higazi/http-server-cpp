@@ -48,6 +48,25 @@ string Response::to_http_format()
   return res;
 }
 
+void Response::handle_compression(string accept_encoding)
+{
+  vector<string> accepted_encodings = split(accept_encoding, ",");
+
+  for (string encoding : accepted_encodings)
+  {
+    ltrim(encoding);
+
+    if (encoding.compare("gzip") == 0)
+    {
+      string new_body = compress(body);
+
+      set_body(new_body, "text/plain");
+
+      headers["Content-Encoding"] = "gzip";
+    }
+  }
+}
+
 ostream &operator<<(ostream &out, Response const &req)
 {
   out << "Response { ";

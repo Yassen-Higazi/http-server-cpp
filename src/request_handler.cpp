@@ -102,16 +102,7 @@ string HandleRequestTask::handle_connection(char *buffer)
   }
 
   // Handle compression
-  vector<string> accepted_encodings = split(request.headers["Accept-Encoding"], ",");
-
-  if (std::find(accepted_encodings.begin(), accepted_encodings.end(), "gzip") != accepted_encodings.end())
-  {
-    string new_body = compress(response.body);
-
-    response.set_body(new_body, "text/plain");
-
-    response.headers["Content-Encoding"] = "gzip";
-  }
+  response.handle_compression(request.headers["Accept-Encoding"]);
 
   return response.to_http_format();
 }

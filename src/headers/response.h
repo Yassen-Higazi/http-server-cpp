@@ -33,4 +33,6 @@ public:
   string to_http_format();
 
   friend ostream &operator<<(ostream &out, const Response &req);
+
+  void handle_compression(string accept_encoding);
 };
